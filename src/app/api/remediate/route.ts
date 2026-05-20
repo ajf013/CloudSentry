@@ -142,6 +142,8 @@ export async function POST(request: NextRequest) {
       - "manualFix": A string array detailing clear, step-by-step clicks in the Azure Portal to fix this.
       - "scriptFix": An object containing:
         - "cli": A copy-pasteable Azure CLI bash command to remediate this specific resource.
+        - "terraform": A copy-pasteable, valid Terraform resource or attribute configuration block (HCL) to remediate/enforce this security rule.
+        - "bicep": A valid Azure Bicep code block (resource or module configuration) that implements this security setting.
       - "exemptionRationale": A short paragraph explaining when it is acceptable to exempt this rule (e.g. sandbox env, legacy systems, alternate controls).
       - "exemptionCommand": The exact Azure CLI command to exempt this recommendation. It must follow this pattern:
         az security exemption create --name "ex-${assessmentName || "assessment"}" --resource-id "${resourceId || `/subscriptions/${subscriptionId}`}" --exemption-category "Waiver" --display-name "Exempt: ${displayName}" --description "Business waiver for security assessment"
