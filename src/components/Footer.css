@@ -1,0 +1,108 @@
+.footer_main {
+  padding: 40px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(10, 10, 15, 0.3);
+  backdrop-filter: blur(8px);
+  animation: slideUp 0.8s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer_Icons {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.footer_Icons span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer_Icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer_Icons .footer_git a {
+  color: rgb(240, 240, 240);
+}
+
+.footer_Icons .footer_link a {
+  color: rgb(255, 255, 255);
+}
+
+.footer_Icons .footer_insta a {
+  color: rgb(255, 192, 203);
+}
+
+.footer_Icons .footer_wht a {
+  color: rgb(144, 238, 144);
+}
+
+.footer_Icons .footer_twi a {
+  color: rgb(135, 206, 250);
+}
+
+/* Hover States with scale and premium glow */
+.footer_Icons .footer_git a:hover {
+  color: rgb(196, 191, 191);
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+.footer_Icons .footer_link a:hover {
+  color: rgb(51, 39, 156);
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(51, 39, 156, 0.5));
+}
+
+.footer_Icons .footer_insta a:hover {
+  color: rgb(198, 72, 202);
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(198, 72, 202, 0.5));
+}
+
+.footer_Icons .footer_wht a:hover {
+  color: #25d366;
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(37, 211, 102, 0.5));
+}
+
+.footer_Icons .footer_twi a:hover {
+  color: #1da1f2;
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(29, 161, 242, 0.5));
+}
+
+.footer_content {
+  text-align: center;
+  color: rgb(240, 156, 0);
+  font-size: 0.9rem;
+  letter-spacing: 0.025em;
+}
+
+.footer_content strong {
+  color: rgb(255, 166, 0);
+  font-weight: 600;
+}
