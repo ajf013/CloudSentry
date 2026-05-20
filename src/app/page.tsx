@@ -14,7 +14,18 @@ export default function Home() {
   const [profilePhotoError, setProfilePhotoError] = useState(false);
   const [tenantName, setTenantName] = useState<string>("");
   const [tenantId, setTenantId] = useState<string>("");
+  const [clerkTimeout, setClerkTimeout] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Check if Clerk takes too long to load (likely due to missing env variables)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isLoaded) {
+        setClerkTimeout(true);
+      }
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [isLoaded]);
 
   // Fetch Tenant Info on mount
   useEffect(() => {
@@ -74,7 +85,13 @@ export default function Home() {
         {/* Right Section: Settings Gear or Sign In */}
         <div className="home-header-right" ref={menuRef}>
           {!isLoaded ? (
-            <div className="shimmer" style={{ width: "80px", height: "35px", borderRadius: "8px" }} />
+            clerkTimeout ? (
+              <span style={{ fontSize: "0.75rem", color: "#f87171", display: "inline-flex", alignItems: "center", gap: "0.25rem" }} title="Verify Clerk credentials in Netlify configuration">
+                ⚠️ Auth Offline
+              </span>
+            ) : (
+              <div className="shimmer" style={{ width: "80px", height: "35px", borderRadius: "8px" }} />
+            )
           ) : isSignedIn ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative' }}>
               <button 
@@ -240,9 +257,20 @@ export default function Home() {
           Connect your Microsoft Tenant to fetch your CloudSentry security score, view recommendations, and generate instant, clear step-by-step AI remediation instructions.
         </p>
 
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', flexDirection: clerkTimeout ? 'column' : 'row', alignItems: 'center' }}>
           {!isLoaded ? (
-            <div className="shimmer" style={{ width: "200px", height: "48px", borderRadius: "8px" }} />
+            clerkTimeout ? (
+              <div className="glass-panel" style={{ padding: '1rem 1.5rem', border: '1px solid rgba(239, 68, 68, 0.2)', background: 'rgba(239, 68, 68, 0.02)', borderRadius: '8px', maxWidth: '420px', textAlign: 'center' }}>
+                <p style={{ color: '#f87171', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+                  ⚠️ Authentication Configuration Offline
+                </p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', lineHeight: 1.4 }}>
+                  Clerk is taking longer than expected to load. Please verify that your environment variables (<code>NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</code> and <code>CLERK_SECRET_KEY</code>) are correctly set in Netlify.
+                </p>
+              </div>
+            ) : (
+              <div className="shimmer" style={{ width: "200px", height: "48px", borderRadius: "8px" }} />
+            )
           ) : isSignedIn ? (
             <Link href="/dashboard" className="btn-primary" style={{ padding: '1rem 2rem', fontSize: '1.05rem' }}>
               Launch App Dashboard
