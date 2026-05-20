@@ -4,6 +4,7 @@ import { useEffect, useState, startTransition, useRef } from "react";
 import { UserButton, useUser, useClerk } from "@clerk/nextjs";
 import Link from "next/link";
 import DefenderLogo from "@/components/DefenderLogo";
+import SecurityTrendChart from "@/components/SecurityTrendChart";
 
 
 interface Subscription {
@@ -545,6 +546,11 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Historical Score Tracking & Charting */}
+            <div style={{ marginBottom: "2rem" }}>
+              <SecurityTrendChart currentScore={secureScore?.percentage || 0} />
             </div>
 
             {/* Recommendations Filter Bar */}
