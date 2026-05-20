@@ -1,0 +1,8 @@
+{
+  "version": "1.1.0",
+  "features": [
+    "Full branding overhaul to CloudSentry",
+    "Clerk OAuth transition guides & diagnostic warning alerts",
+    "Hostinger DNS and Netlify subdomain routing deployment instructions"
+  ]
+}
