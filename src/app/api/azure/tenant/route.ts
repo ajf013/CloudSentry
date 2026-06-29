@@ -1,9 +1,62 @@
 import { NextResponse } from "next/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { getAzureToken, fetchAzureApi } from "@/lib/azure";
 
 export async function GET() {
   try {
-    // 1. Fetch token and list tenants from ARM to get the tenantId
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // 1. Verify that the user has an active Azure tenant using their personal Microsoft OAuth token
+    const client = await clerkClient();
+    let oauthTokens;
+    try {
+      oauthTokens = await client.users.getUserOauthAccessToken(userId, "oauth_microsoft");
+    } catch (err) {
+      console.warn("Failed to retrieve user OAuth tokens from Clerk:", err);
+    }
+
+    const userToken = oauthTokens?.data?.[0]?.token;
+    if (userToken) {
+      try {
+        const userTenantsRes = await fetch("https://management.azure.com/tenants?api-version=2020-01-01", {
+          headers: {
+            "Authorization": `Bearer ${userToken}`,
+            "Accept": "application/json"
+          }
+        });
+
+        if (!userTenantsRes.ok) {
+          const errText = await userTenantsRes.text();
+          console.error(`Microsoft tenant verification failed (${userTenantsRes.status}): ${errText}`);
+          return NextResponse.json(
+            { error: "No active Azure tenant found. Please sign in with an account that has an active Azure tenant.", code: "NO_ACTIVE_TENANT" },
+            { status: 403 }
+          );
+        }
+
+        const userTenantsData = await userTenantsRes.json();
+        const userTenantsList = userTenantsData.value || [];
+        if (userTenantsList.length === 0) {
+          return NextResponse.json(
+            { error: "No active Azure tenant found. Please sign in with an account that has an active Azure tenant.", code: "NO_ACTIVE_TENANT" },
+            { status: 403 }
+          );
+        }
+      } catch (armErr) {
+        console.error("Exception during user tenant verification via ARM:", armErr);
+        return NextResponse.json(
+          { error: "Failed to verify Azure tenant status.", code: "NO_ACTIVE_TENANT" },
+          { status: 403 }
+        );
+      }
+    } else {
+      console.log("No Microsoft OAuth token found in Clerk (using env defaults / mock directory for dev).");
+    }
+
+    // 2. Fetch token and list tenants from ARM (using service credentials) to get the tenantId
     const armToken = await getAzureToken("https://management.azure.com/.default");
     const armData = await fetchAzureApi("/tenants?api-version=2020-01-01", armToken);
     const tenants = armData.value || [];
@@ -15,7 +68,7 @@ export async function GET() {
     const tenantId = tenants[0].tenantId;
     let displayName = tenants[0].displayName || "Microsoft Entra Tenant";
 
-    // 2. Fetch Graph token to retrieve the exact organization name from Microsoft Graph
+    // 3. Fetch Graph token to retrieve the exact organization name from Microsoft Graph
     try {
       const graphToken = await getAzureToken("https://graph.microsoft.com/.default");
       const orgResponse = await fetch("https://graph.microsoft.com/v1.0/organization", {

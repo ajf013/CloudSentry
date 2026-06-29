@@ -44,3 +44,6 @@ next-env.d.ts
 
 # scratch files
 /scratch/
+
+# Local Netlify folder
+.netlify

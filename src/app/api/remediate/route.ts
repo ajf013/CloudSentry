@@ -139,7 +139,12 @@ export async function POST(request: NextRequest) {
       
       Requirements for the JSON response:
       - "description": A concise, executive summary of what this security rule is, why it failed, and the security risk.
-      - "manualFix": A string array detailing clear, step-by-step clicks in the Azure Portal to fix this.
+      - "manualFix": An array of objects, where each object details a step in the Azure Portal to fix this, containing:
+        - "step": The step number (integer).
+        - "instruction": The text instruction for the step.
+        - "screenName": The name of the Azure Portal screen or service page (e.g., "Search", "Key Vaults", "Firewalls and Virtual Networks", "Defender for Cloud").
+        - "elementToClick": The label of the button, input, or tab to interact with (e.g., "Access policies", "Search bar", "Add custom role").
+        - "action": The type of action (one of: "search", "navigate", "click", "toggle", "select").
       - "scriptFix": An object containing:
         - "cli": A copy-pasteable Azure CLI bash command to remediate this specific resource.
         - "terraform": A copy-pasteable, valid Terraform resource or attribute configuration block (HCL) to remediate/enforce this security rule.

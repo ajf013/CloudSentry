@@ -1,8 +1,12 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "features": [
-    "Full branding overhaul to CloudSentry",
-    "Clerk OAuth transition guides & diagnostic warning alerts",
-    "Hostinger DNS and Netlify subdomain routing deployment instructions"
+    "Microsoft Login Gate: Active Tenant check with auto sign-out redirect",
+    "Segmented filters for Unhealthy/Healthy statuses and High/Medium/Low severities",
+    "Interactive Visual Azure Portal Mockups for manual click-by-step remediation",
+    "Interactive Exemption CLI command builder with custom justification & expiration",
+    "Markdown security posture report exporter",
+    "Light & Dark Mode Theme Switcher with high-contrast Obsidian light theme",
+    "AI Security Copilot interface improvements & navigation trigger"
   ]
 }

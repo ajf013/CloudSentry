@@ -15,7 +15,46 @@ export default function Home() {
   const [tenantName, setTenantName] = useState<string>("");
   const [tenantId, setTenantId] = useState<string>("");
   const [clerkTimeout, setClerkTimeout] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Load and apply theme on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "dark" | "light" | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      if (savedTheme === "light") {
+        document.body.classList.add("light-theme");
+      } else {
+        document.body.classList.remove("light-theme");
+      }
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    if (newTheme === "light") {
+      document.body.classList.add("light-theme");
+    } else {
+      document.body.classList.remove("light-theme");
+    }
+  };
+
+  // Check for tenant validation error query parameter
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("error") === "no_active_tenant") {
+        setAuthError("Your Microsoft account does not have an active Azure tenant. Please connect with an account that has an active tenant.");
+        if (isSignedIn) {
+          signOut().catch(err => console.error("Auto sign out failed:", err));
+        }
+      }
+    }
+  }, [isSignedIn]);
 
   // Check if Clerk takes too long to load (likely due to missing env variables)
   useEffect(() => {
@@ -61,6 +100,39 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {authError && (
+        <div style={{
+          background: "rgba(239, 68, 68, 0.15)",
+          borderBottom: "1px solid rgba(239, 68, 68, 0.25)",
+          color: "#f87171",
+          padding: "0.85rem 1.5rem",
+          fontSize: "0.85rem",
+          textAlign: "center",
+          fontWeight: 600,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "0.5rem",
+          zIndex: 1000
+        }}>
+          <span>⚠️</span>
+          <span>{authError}</span>
+          <button 
+            onClick={() => setAuthError(null)} 
+            style={{ 
+              background: "transparent", 
+              border: "none", 
+              color: "#f87171", 
+              cursor: "pointer", 
+              marginLeft: "1rem", 
+              fontSize: "1.2rem", 
+              lineHeight: 1
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
       {/* Header */}
       <header className="glass-panel home-header">
         {/* Left Section: Spacer to center the logo + button */}
@@ -83,7 +155,29 @@ export default function Home() {
         </div>
         
         {/* Right Section: Settings Gear or Sign In */}
-        <div className="home-header-right" ref={menuRef}>
+        <div className="home-header-right" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} ref={menuRef}>
+          {/* Theme Toggle Button */}
+          <button 
+            onClick={toggleTheme}
+            className="btn-secondary" 
+            style={{ 
+              height: "38px",
+              width: "38px",
+              padding: 0, 
+              borderRadius: "8px", 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              cursor: "pointer",
+              background: "rgba(255, 255, 255, 0.02)",
+              transition: "all 0.2s ease"
+            }}
+            title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            <span style={{ fontSize: "1rem" }}>{theme === "dark" ? "☀️" : "🌙"}</span>
+          </button>
+
           {!isLoaded ? (
             clerkTimeout ? (
               <span style={{ fontSize: "0.75rem", color: "#f87171", display: "inline-flex", alignItems: "center", gap: "0.25rem" }} title="Verify Clerk credentials in Netlify configuration">
@@ -240,8 +334,9 @@ export default function Home() {
           lineHeight: 1.1,
           letterSpacing: '-0.03em',
           marginBottom: '1.5rem',
-          background: 'linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%)',
+          background: 'var(--hero-text-gradient)',
           WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
           WebkitTextFillColor: 'transparent'
         }}>
           Secure Your Azure Environment

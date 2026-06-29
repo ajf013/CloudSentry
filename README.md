@@ -184,6 +184,25 @@ Connect your GitHub repository in the [Netlify Dashboard](https://app.netlify.co
 
 > **DNS**: If hosting as a subdomain via Hostinger, add a `CNAME` record pointing your subdomain to your Netlify site's default domain (e.g. `your-site.netlify.app`).
 
+## Version History & Release Notes
+
+### [v1.2.0] - June 2026
+- **Microsoft Login Gate (Active Tenant Check)**: Intercepts login flow to verify if the account has at least one active Azure directory. Signs out and redirects back to home with clear instructions if no tenant is found.
+- **Segmented Chip Filters**: Replaced dropdowns with responsive, color-coded status chips (🔴 Unhealthy, 🟢 Healthy, All) and severity chips (🔴 High, 🟡 Medium, 🔵 Low, All).
+- **Interactive Visual Azure Portal Mockups**: Shows a step-by-step interactive simulated browser view of the Azure Portal for manual click-by-step remediation.
+- **Interactive Exemption Command Builder**: Input custom justifications and expiration dates dynamically to update the copyable CLI command.
+- **Markdown Report Exporter**: Download current posture views and scripts as a clean Markdown report with a single click.
+- **Theme Switcher**: Supported theme toggles inside headers with a fully responsive Obsidian light theme mode.
+- **AI Security Copilot Enhancement**: Replaced the closed icon with a custom chatbot head SVG and added a dedicated launcher in the dashboard navigation header.
+
+### [v1.1.0] - June 2026
+- Full branding overhaul to **CloudSentry**.
+- Clerk OAuth transition guides & diagnostic warning alerts.
+- Hostinger DNS and Netlify subdomain routing deployment instructions.
+
+### [v1.0.0] - June 2026
+- Initial release of the comparative dual AI security posture dashboard.
+
 ---
 
 ## Technology Stack
