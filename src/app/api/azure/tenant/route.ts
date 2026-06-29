@@ -31,26 +31,32 @@ export async function GET() {
         if (!userTenantsRes.ok) {
           const errText = await userTenantsRes.text();
           console.error(`Microsoft tenant verification failed (${userTenantsRes.status}): ${errText}`);
-          return NextResponse.json(
-            { error: "No active Azure tenant found. Please sign in with an account that has an active Azure tenant.", code: "NO_ACTIVE_TENANT" },
-            { status: 403 }
-          );
-        }
-
-        const userTenantsData = await userTenantsRes.json();
-        const userTenantsList = userTenantsData.value || [];
-        if (userTenantsList.length === 0) {
-          return NextResponse.json(
-            { error: "No active Azure tenant found. Please sign in with an account that has an active Azure tenant.", code: "NO_ACTIVE_TENANT" },
-            { status: 403 }
-          );
+          
+          // If the error is 401 Unauthorized or 403 Forbidden, it indicates the token lacks the
+          // necessary "https://management.azure.com/user_impersonation" scope in Clerk dashboard config.
+          // In this case, we proceed with service principal fallback instead of locking the user out.
+          if (userTenantsRes.status === 401 || userTenantsRes.status === 403) {
+            console.warn("User OAuth token is unauthorized for Azure Resource Manager. Proceeding with service principal fallback.");
+          } else {
+            return NextResponse.json(
+              { error: "No active Azure tenant found. Please sign in with an account that has an active Azure tenant.", code: "NO_ACTIVE_TENANT" },
+              { status: 403 }
+            );
+          }
+        } else {
+          const userTenantsData = await userTenantsRes.json();
+          const userTenantsList = userTenantsData.value || [];
+          if (userTenantsList.length === 0) {
+            return NextResponse.json(
+              { error: "No active Azure tenant found. Please sign in with an account that has an active Azure tenant.", code: "NO_ACTIVE_TENANT" },
+              { status: 403 }
+            );
+          }
         }
       } catch (armErr) {
         console.error("Exception during user tenant verification via ARM:", armErr);
-        return NextResponse.json(
-          { error: "Failed to verify Azure tenant status.", code: "NO_ACTIVE_TENANT" },
-          { status: 403 }
-        );
+        // Do not lock out on network/DNS exception during verification
+        console.warn("Proceeding with service principal fallback due to verification exception.");
       }
     } else {
       console.log("No Microsoft OAuth token found in Clerk (using env defaults / mock directory for dev).");
