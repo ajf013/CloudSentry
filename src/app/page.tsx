@@ -325,7 +325,7 @@ export default function Home() {
           fontWeight: 600,
           marginBottom: '2rem'
         }}>
-          <span>🤖 Powered by Gemini 2.5 & Azure OpenAI (GPT-4o)</span>
+          <span>🤖 Powered by Gemini 2.5 & Azure OpenAI (GPT-5.1)</span>
         </div>
 
         <h1 style={{

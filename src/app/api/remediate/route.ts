@@ -74,7 +74,7 @@ async function callGemini(prompt: string, systemInstruction: string) {
 async function callAzureOpenAI(prompt: string, systemInstruction: string) {
   const apiKey = process.env.AZURE_OPENAI_API_KEY;
   const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
-  const deployment = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
+  const deployment = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-5.1";
 
   if (!apiKey || !endpoint) return null;
 

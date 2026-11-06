@@ -1923,7 +1923,7 @@ export default function Dashboard() {
                       {/* Provider Header */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(0, 120, 212, 0.15)", paddingBottom: "0.75rem" }}>
                         <h4 style={{ fontWeight: 700, fontSize: "1rem", color: "#0078d4" }}>Azure AI</h4>
-                        <span className="badge" style={{ background: "rgba(0, 120, 212, 0.15)", color: "#60cdff", fontSize: "0.7rem", fontWeight: 600 }}>GPT-4o</span>
+                        <span className="badge" style={{ background: "rgba(0, 120, 212, 0.15)", color: "#60cdff", fontSize: "0.7rem", fontWeight: 600 }}>GPT-5.1</span>
                       </div>
 
                       {/* Content */}
